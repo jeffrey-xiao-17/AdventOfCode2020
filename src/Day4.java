@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class Day4 {
-
     public static String[] required = new String[] {"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"};
     public static Set<String> eyeColors = new HashSet<String>();
 
@@ -18,15 +17,15 @@ public class Day4 {
                 String curr = br.readLine();
                 String[] fields = curr.split(" ");
                 if (!fields[0].equals("")) {
-                  for (String f : fields) {
+                    for (String f : fields) {
                     input.get(input.size() - 1).put(f.substring(0, 3), f.substring(4));
-                  }
+                    }
                 } else {
-                  input.add(new HashMap<String, String>());
+                    input.add(new HashMap<String, String>());
                 }
             }
             if (input.get(input.size() - 1).isEmpty()) {
-              input.remove(input.size() - 1);
+                input.remove(input.size() - 1);
             }
             eyeColors.add("amb");
             eyeColors.add("blu");
@@ -65,7 +64,7 @@ public class Day4 {
       
       for (Map<String, String> m : input) {
         boolean containsAll = true;
-        
+
         // byr
         containsAll = containsAll && m.containsKey("byr") && Integer.parseInt(m.get("byr")) >= 1920 && Integer.parseInt(m.get("byr")) <= 2002;
 
