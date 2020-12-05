@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class Day5 {
-    public static String[] required = new String[] {"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"};
-    public static Set<String> eyeColors = new HashSet<String>();
 
     public static void main(String[] args) {
         try {
@@ -96,9 +94,6 @@ public class Day5 {
                 low = mid + 1;
             }
         }
-
         return high + INDEX_FACTOR;
     }
-
-     
 }
