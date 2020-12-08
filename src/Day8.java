@@ -13,8 +13,8 @@ public class Day8 {
             while (br.ready()) {
                 input.add(br.readLine());
             }
-            System.out.println("Value of acc before infinite loop: "+findAcc(input));
-            System.out.println("Value of acc after changing: "+accAfterFixing(input));
+            System.out.println("Value of acc before infinite loop: " + findAcc(input).getAcc());
+            System.out.println("Value of acc after changing: " + accAfterFixing(new ArrayList<String>(input)));
             br.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -23,56 +23,27 @@ public class Day8 {
         }
     }
 
-    public static int findAcc(List<String> input) {
-        int acc = 0;
-        Set<Integer> seenLineNums = new HashSet<Integer>();
-        int currLine = 0;
-        while (!seenLineNums.contains(currLine) && currLine != input.size() - 1) {
-            seenLineNums.add(currLine);
-            String instruc = input.get(currLine);
-            String type = instruc.substring(0, 3);
-            Integer val = Integer.parseInt(instruc.substring(4));
-            switch (type) {
-                case "acc":
-                    currLine++;
-                    acc += val;
-                    break;
-                case "jmp":
-                    currLine += val;
-                    break;
-                default:
-                    currLine++;
-            }
-        }
-        if (currLine == input.size() - 1) {
-            String instruc = input.get(currLine);
-            String type = instruc.substring(0, 3);
-            Integer val = Integer.parseInt(instruc.substring(4));
-            if (type.equals("acc")) {
-                currLine++;
-                acc += val;
-            }
-        }
-        return acc;
-    }
-
     public static int accAfterFixing(List<String> input) {
         for (int i = 0; i < input.size(); i++) {
-            List<String> copy = new ArrayList<String>(input);
             String instruc = input.get(i);
             String type = instruc.substring(0, 3);
+            Tuple res;
             switch (type) {
                 case "jmp":
-                    copy.set(i, "nop"+instruc.substring(3));
-                    if (!isInfinite(copy)) {
-                        return findAcc(copy);
+                    input.set(i, "nop"+instruc.substring(3));
+                    res = findAcc(input);
+                    if (!res.getInfinite()) {
+                        return res.getAcc();
                     }
+                    input.set(i, "jmp"+instruc.substring(3));
                     break;
                 case "nop":
-                    copy.set(i, "jmp"+instruc.substring(3));
-                    if (!isInfinite(copy)) {
-                        return findAcc(copy);
+                    input.set(i, "jmp"+instruc.substring(3));
+                    res = findAcc(input);
+                    if (!res.getInfinite()) {
+                        return res.getAcc();
                     }
+                    input.set(i, "nop"+instruc.substring(3));
                     break;
                 default:
                     break;
@@ -81,12 +52,14 @@ public class Day8 {
         return -1;
     }
 
-    private static boolean isInfinite(List<String> input) {
+    private static Tuple findAcc(List<String> input) {
         Set<Integer> seenLineNums = new HashSet<Integer>();
         int currLine = 0;
+        Tuple res = new Tuple(0, false);
         while (currLine != input.size() - 1) {
             if (seenLineNums.contains(currLine)) {
-                return true;
+                res.setInfinite(true);
+                return res;
             }
             seenLineNums.add(currLine);
             String instruc = input.get(currLine);
@@ -94,12 +67,47 @@ public class Day8 {
             Integer val = Integer.parseInt(instruc.substring(4));
             if (type.equals("acc")) {
                 currLine++;
+                res.updateAcc(val);
             } else if (type.equals("jmp")) {
                 currLine += val;
             } else {
                 currLine++;
             }
         }
-        return false;
+        if (currLine == input.size() - 1) {
+            String instruc = input.get(currLine);
+            String type = instruc.substring(0, 3);
+            Integer val = Integer.parseInt(instruc.substring(4));
+            if (type.equals("acc")) {
+                currLine++;
+                res.updateAcc(val);
+            }
+        }
+        return res;
+    }
+
+    static class Tuple {
+        private int acc;
+        private boolean infinite;
+        public Tuple(int acc, boolean infinite) {
+            this.acc = acc;
+            this.infinite = infinite;
+        }
+
+        public int getAcc() {
+            return acc;
+        }
+
+        public void updateAcc(int add) {
+            acc += add;
+        }
+
+        public void setInfinite(boolean b) {
+            infinite = b;
+        }
+
+        public boolean getInfinite() {
+            return infinite;
+        }
     }
 }
