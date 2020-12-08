@@ -13,7 +13,7 @@ public class Day8 {
             while (br.ready()) {
                 input.add(br.readLine());
             }
-            System.out.println("Value of acc before infinite loop: " + findAcc(input).getAcc());
+            System.out.println("Value of acc before infinite loop: " + findAcc(new ArrayList<String>(input)).getAcc());
             System.out.println("Value of acc after changing: " + accAfterFixing(new ArrayList<String>(input)));
             br.close();
         } catch (FileNotFoundException e) {
